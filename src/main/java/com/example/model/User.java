@@ -2,16 +2,7 @@ package com.example.model;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -23,7 +14,10 @@ import org.springframework.data.annotation.Transient;
 public class User {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = 10000)
+	//    @Column(name = "id", unique = true, nullable = false, columnDefinition = "integer default nextval('global_seq')")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
+
 	@Column(name = "user_id")
 	private int id;
 	@Column(name = "email")
