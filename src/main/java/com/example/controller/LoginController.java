@@ -2,6 +2,13 @@ package com.example.controller;
 
 import javax.validation.Valid;
 
+import com.example.model.Payee;
+import com.example.model.Role;
+import com.example.model.Transaction;
+import com.example.repository.PayeeRepository;
+import com.example.repository.RoleRepository;
+import com.example.repository.TransactionRepository;
+import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,16 +21,81 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.model.User;
 import com.example.service.UserService;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 @Controller
 public class LoginController {
 	
 	@Autowired
 	private UserService userService;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+	@Autowired
+    private PayeeRepository payeeRepository;
+
+	@Autowired
+    private TransactionRepository transactionRepository;
+
+    private void initDatabase(){
+
+        // write payee to db if needed
+        Payee payee = new Payee("OOO JEK", 10, 30);
+        if (payeeRepository.findByName(payee.getName()) == null){
+            payeeRepository.save(payee);
+        }
+        payee = payeeRepository.findByName(payee.getName());
+
+        //write roles to db if needed
+        HashSet<Role> roles = new HashSet<>(
+                Arrays.asList(
+                        new Role("ADMIN"), new Role("USER")
+                )
+        );
+        HashSet<Role> rolesDb = new HashSet<>();
+        for (Role role: roles) {
+            if (roleRepository.findByRole(role.getRole()) == null){
+                roleRepository.save(role);
+            }
+            rolesDb.add(roleRepository.findByRole(role.getRole()));
+        }
+
+
+        //write user to db if nneded
+		User user = new User();
+		user.setEmail("asd@asd.asd");
+		user.setPassword("123123");
+		user.setName("Sergey");
+        user.setLastName("Vorozhtsov");
+		user.setActive(1);
+		user.setRoles(roles);
+        if (userService.findUserByEmail(user.getEmail()) == null){
+            userService.saveUser(user);
+        }
+        user = userService.findUserByEmail(user.getEmail());
+
+        //write transaction to db if needed
+        Transaction transaction = new Transaction();
+        transaction.setAmount(1234);
+        transaction.setUser(user);
+        transaction.setPayee(payee);
+        transactionRepository.save(transaction);
+	}
+
 	@RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
 	public ModelAndView login(){
+
+        initDatabase();
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("login");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.findUserByEmail(auth.getName());
+        if (user != null) {
+            modelAndView.setViewName("redirect:app/home");
+        } else {
+            modelAndView.setViewName("login");
+        }
 		return modelAndView;
 	}
 	
@@ -58,14 +130,14 @@ public class LoginController {
 		return modelAndView;
 	}
 	
-	@RequestMapping(value="/admin/home", method = RequestMethod.GET)
+	@RequestMapping(value="/app/home", method = RequestMethod.GET)
 	public ModelAndView home(){
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());
 		modelAndView.addObject("userName", "Welcome " + user.getName() + " " + user.getLastName() + " (" + user.getEmail() + ")");
 		modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
-		modelAndView.setViewName("admin/home");
+		modelAndView.setViewName("app/home");
 		return modelAndView;
 	}
 	
