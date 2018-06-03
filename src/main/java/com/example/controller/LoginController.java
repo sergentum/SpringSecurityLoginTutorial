@@ -80,7 +80,7 @@ public class LoginController {
         Transaction transaction = new Transaction();
         transaction.setAmount(1234);
         transaction.setUser(user);
-//        transaction.setPayee(payee);
+        transaction.setPayee(payee);
         transactionRepository.save(transaction);
 
         for (Transaction trans : user.getTransactions()) {

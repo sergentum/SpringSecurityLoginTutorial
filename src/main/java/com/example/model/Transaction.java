@@ -14,8 +14,9 @@ public class Transaction {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @JoinColumn(name = "payee_id")
-//    private Payee payee;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "payee_id")
+    private Payee payee;
 
     private int amount;
 
@@ -23,9 +24,9 @@ public class Transaction {
         this.user = user;
     }
 
-//    public void setPayee(Payee payee) {
-//        this.payee = payee;
-//    }
+    public void setPayee(Payee payee) {
+        this.payee = payee;
+    }
 
     public void setAmount(int amount) {
         this.amount = amount;
@@ -36,9 +37,9 @@ public class Transaction {
         return user;
     }
 
-//    public Payee getPayee() {
-//        return payee;
-//    }
+    public Payee getPayee() {
+        return payee;
+    }
 
     public int getAmount() {
         return amount;
@@ -49,6 +50,7 @@ public class Transaction {
         return "Transaction{" +
                 "id=" + id +
                 ", user=" + user +
+                ", payee=" + payee +
                 ", amount=" + amount +
                 '}';
     }
