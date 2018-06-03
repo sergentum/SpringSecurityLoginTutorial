@@ -46,10 +46,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "transaction",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "payee_id"))
+    @OneToMany(mappedBy = "user")
     private Set<Transaction> transactions;
 
     public void setTransactions(Set<Transaction> transactions) {

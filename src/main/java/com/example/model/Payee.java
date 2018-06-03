@@ -3,10 +3,6 @@ package com.example.model;
 import javax.persistence.*;
 
 @Entity
-@Table(
-        name = "payee",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
-)
 public class Payee {
 
     @Id
