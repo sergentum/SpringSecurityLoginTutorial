@@ -43,4 +43,13 @@ public class Transaction {
     public int getAmount() {
         return amount;
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", user=" + user +
+                ", amount=" + amount +
+                '}';
+    }
 }

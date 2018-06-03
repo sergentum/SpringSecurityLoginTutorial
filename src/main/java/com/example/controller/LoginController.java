@@ -82,6 +82,10 @@ public class LoginController {
         transaction.setUser(user);
 //        transaction.setPayee(payee);
         transactionRepository.save(transaction);
+
+        for (Transaction trans : user.getTransactions()) {
+            System.out.println(trans);
+        }
 	}
 
 	@RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
